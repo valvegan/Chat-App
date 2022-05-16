@@ -16,7 +16,6 @@ import BgImg from "../assets/BackgroundImage.png";
 //user icon
 import MySvg from "../assets/icon.svg";
 import Svg, { Defs, Path, G, Mask, Use } from "react-native-svg";
-import userIcon from "./userIcon";
 
 //importing fonts
 let customFonts = {
