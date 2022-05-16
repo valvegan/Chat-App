@@ -16,23 +16,20 @@ import BgImg from "../assets/BackgroundImage.png";
 //user icon
 import MySvg from "../assets/icon.svg";
 import Svg, { Defs, Path, G, Mask, Use } from "react-native-svg";
+import { SvgCssUri } from "react-native-svg";
 
-//importing fonts
-let customFonts = {
-  Poppins: require("../assets/fonts/Poppins-Black.ttf"),
-  "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
-};
 //start component which requires to enter a name and allows to customise chat colors
 export default class Start extends React.Component {
   constructor(props) {
     super(props);
     this.state = { name: "", fontsLoaded: false };
   }
+
   async loadFonts() {
     await Font.loadAsync({
       // Any string can be used as the fontFamily name. Here we use an object to provide more control
       Poppins: {
-        uri: require("../assets/fonts/Poppins-Black.ttf"),
+        uri: require("../assets/fonts/Poppins-Light.ttf"),
         display: Font.FontDisplay.FALLBACK,
       },
     });
@@ -46,46 +43,18 @@ export default class Start extends React.Component {
     return (
       <View style={styles.container}>
         <ImageBackground source={BgImg} style={styles.backgroundImg}>
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "Poppins",
-              padding: 50,
-              fontSize: 40,
-            }}
-          >
-            The chat App
-          </Text>
-
-          <View style={{ backgroundColor: "white", padding: 10 }}>
-            <View>
-              <Svg width="50" height="50" viewBox="0 0 20 19">
-                <Defs>
-                  <Path
-                    d="M12 13.253c3.24 0 9.6 1.577 9.6 4.852v2.426H2.4v-2.426c0-3.275 6.36-4.852 9.6-4.852zm8.64 6.318v-1.466c0-2.014-4.663-3.892-8.64-3.892-3.977 0-8.64 1.878-8.64 3.892v1.466h17.28zM12 11.36c-2.376 0-4.32-1.917-4.32-4.26S9.624 2.84 12 2.84c2.376 0 4.32 1.917 4.32 4.26s-1.944 4.26-4.32 4.26zm0-.96c1.849 0 3.36-1.49 3.36-3.3 0-1.81-1.511-3.3-3.36-3.3S8.64 5.29 8.64 7.1c0 1.81 1.511 3.3 3.36 3.3z"
-                    id="a"
-                  />
-                </Defs>
-                <G
-                  transform="translate(-58 -389) translate(24 355) translate(16 16) translate(16 16)"
-                  stroke="none"
-                  strokeWidth={1}
-                  fill="none"
-                  fillRule="evenodd"
-                >
-                  <Path d="M0 0H24V23.6666667H0z" />
-                  <Mask fill="#fff">
-                    <Use xlinkHref="#a" />
-                  </Mask>
-                  <Use fill="#757083" fillRule="nonzero" xlinkHref="#a" />
-                </G>
-              </Svg>
+          <Text style={styles.Title}>The chat App</Text>
+          <View style={styles.startBox}>
+            <View style={styles.inputText}>
+              <SvgCssUri
+                width="20%"
+                height="20%"
+                uri="https://raw.githubusercontent.com/valvegan/hello-world/49434bb08d18ce177437e2ec6e3f34f0d3000a04/assets/icon.svg"
+              />
               <TextInput
                 style={{
                   height: 40,
-                  borderColor: "gray",
-                  borderWidth: 1,
-                  backgroundColor: "white",
+                  flex: 1,
                   fontFamily: "Poppins",
                 }}
                 onChangeText={(name) => this.setState({ name })}
@@ -93,41 +62,15 @@ export default class Start extends React.Component {
                 placeholder="Your Name"
               ></TextInput>
             </View>
+            <View style={styles.colorPickContainer}>
+            <Text style={styles.colorPickTitle}>Choose Background Color:</Text>
             <View style={styles.colorOptionsContainer}>
-              <View
-                style={{
-                  backgroundColor: "#090C08",
-                  width: 50,
-                  height: 50,
-                  borderRadius: 50,
-                }}
-              ></View>
-              <View
-                style={{
-                  backgroundColor: "#474056",
-                  width: 50,
-                  height: 50,
-                  borderRadius: 50,
-                }}
-              ></View>
-              <View
-                style={{
-                  backgroundColor: "#8A95A5",
-                  width: 50,
-                  height: 50,
-                  borderRadius: 50,
-                }}
-              ></View>
-              <View
-                style={{
-                  backgroundColor: "#B9C6AE",
-                  width: 50,
-                  height: 50,
-                  borderRadius: 50,
-                }}
-              ></View>
+              <View style={styles.colorOption1}></View>
+              <View style={[styles.colorOption1, styles.colorOption2]}></View>
+              <View style={[styles.colorOption1, styles.colorOption3]}></View>
+              <View style={[styles.colorOption1, styles.colorOption4]}></View>
             </View>
-
+            </View>
             <TouchableOpacity
               onPress={() =>
                 this.props.navigation.navigate("Chat", {
@@ -135,15 +78,7 @@ export default class Start extends React.Component {
                 })
               }
             >
-              <Text
-                style={{
-                  backgroundColor: "#474056",
-                  color: "white",
-                  padding: 11,
-                }}
-              >
-                Start Chatting
-              </Text>
+              <Text style={styles.button}>Start Chatting</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -161,9 +96,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  startBox: {
+    backgroundColor: "white",
+    width: "88%",
+    height: "44%",
+    justifyContent: "space-around",
+    margin: 30
+  },
   colorOptionsContainer: {
     flexDirection: "row",
+    width: "70%",
+    
     justifyContent: "space-between",
-    width: "80%",
   },
+  colorOption1: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: "#090C08",
+  },
+  colorOption2: {
+    backgroundColor: "#474056",
+  },
+  colorOption3: {
+    backgroundColor: "#8A95A5",
+  },
+  colorOption4: {
+    backgroundColor: "#B9C6AE",
+  },
+  inputText: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "gray",
+    borderWidth: 1,
+    margin: 20, 
+  },
+  Title: {
+    fontFamily: "Poppins",
+    color: "#ffffff",
+    fontSize: 45,
+    flex: 1,
+    marginTop: 80,
+  },
+  button: {
+    backgroundColor: "#474056",
+    color: "white",
+    width: "86%",
+    alignSelf: "center",
+    height: 50,
+    margin: 10,
+    fontSize: 20,
+    padding: 10,
+    fontFamily: "Poppins",
+    textAlign: "center"
+  },
+  colorPickContainer:{
+    marginLeft: 20
+  }
 });
