@@ -2,12 +2,9 @@ import React from "react";
 import {
   View,
   Text,
-  Button,
   TextInput,
   StyleSheet,
   ImageBackground,
-  Image,
-  Pressable,
 } from "react-native";
 //native component to allow text components to be clickable (and button)
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -38,7 +35,7 @@ export default class Start extends React.Component {
   async loadFonts() {
     await Font.loadAsync({
       // Any string can be used as the fontFamily name. Here we use an object to provide more control
-      Poppins: {
+      'Poppins': {
         uri: require("../assets/fonts/Poppins-Light.ttf"),
         display: Font.FontDisplay.FALLBACK,
       },
