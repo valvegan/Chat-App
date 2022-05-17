@@ -113,6 +113,7 @@ export default class Start extends React.Component {
             </View>
             <TouchableOpacity
             accessible={true}
+            accessibilityRole="button"
             accessibilityLabel="Start chatting button"
             accessibilityHint="let's you navigate to the chat screen"
               onPress={() =>
