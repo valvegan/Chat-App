@@ -26,8 +26,7 @@ export default class Start extends React.Component {
   }
 
   changeBg = (color) => {
-    this.setState({ bg: color,
-      onClicked: !this.state.onClicked });
+    this.setState({ bg: color, onClicked: !this.state.onClicked });
   };
   colors = {
     black: "#090C08",
@@ -82,7 +81,11 @@ export default class Start extends React.Component {
               </Text>
               <View style={styles.colorOptionsContainer}>
                 <TouchableOpacity
-                  style={this.state.onClicked ? styles.colorOption1 : styles.selectedColor}
+                  style={
+                    this.state.onClicked
+                      ? styles.colorOption1
+                      : styles.selectedColor
+                  }
                   onPress={() => this.changeBg(this.colors.black)}
                 ></TouchableOpacity>
                 <TouchableOpacity

@@ -6,7 +6,7 @@ export default class Chat extends React.Component {
 
   //doesn't show up the name
   componentDidMount() {
-    let { name } = this.props.route.params.name;
+    let { name } = this.props.route.params;
     this.props.navigation.setOptions({ title: name });
   }
   render() {
