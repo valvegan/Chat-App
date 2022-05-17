@@ -31,19 +31,23 @@ export default class Chat extends React.Component {
       ],
     });
   }
+
+  onSend(messages = []) {
+    this.setState((previousState) => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }));
+  }
   render() {
     let { bg } = this.props.route.params;
 
     return (
-      
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
-          user={{
-            _id: 1,
-          }}
-        />
-   
+      <GiftedChat
+        messages={this.state.messages}
+        onSend={(messages) => this.onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+      />
     );
   }
 }
