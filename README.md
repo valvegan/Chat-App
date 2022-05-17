@@ -25,6 +25,11 @@ reader so that I can engage with a chat interface.
 - Offline storage
 - Anoynymous user authentication (via Google Firebase authentication)
 
+## Prerequisities
+- Node and latest version of npm
+- Android studio, Xcode, or a mobile phone
+- Expo 
+
 ## Launch and dependencies
 1) Make sure expo-cli is installed globally
 >npm install expo-cli --global
