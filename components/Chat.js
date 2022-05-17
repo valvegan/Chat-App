@@ -3,15 +3,17 @@ import { View, Text, Button } from "react-native";
 
 //chat component 
 export default class Chat extends React.Component {
-  ccomponentDidMount() {
-    let { name } = this.props.route.params;
-    this.props.navigation.setOptions({ title: name });
 
+  //doesn't show up the name
+  componentDidMount() {
+    let { name } = this.props.route.params.name;
+    this.props.navigation.setOptions({ title: name });
   }
   render() {
+    let { bg } = this.props.route.params;
+
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Hello Screen 2!</Text>
+      <View style={{ flex: 1, backgroundColor: bg, justifyContent: "center", alignItems: "center" }}>
         <Button
           title="go to start"
           onPress={() => this.props.navigation.navigate("Start")}
