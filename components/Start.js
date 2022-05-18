@@ -4,8 +4,9 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  ImageBackground,
+  ImageBackground
 } from "react-native";
+import * as SplashScreen from 'expo-splash-screen';
 //native component to allow text components to be clickable (and button)
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Font from "expo-font";
@@ -32,6 +33,10 @@ export default class Start extends React.Component {
     green: "#B9C6AE",
   };
 
+ componentDidMount() {
+     this.loadFonts()
+  }
+
   async loadFonts() {
     await Font.loadAsync({
       // Any string can be used as the fontFamily name. Here we use an object to provide more control
@@ -43,10 +48,11 @@ export default class Start extends React.Component {
     this.setState({ fontsLoaded: true });
   }
 
-  componentDidMount() {
-    this.loadFonts();
-  }
+
   render() {
+    if(!this.state.fontsLoaded){
+      return (<View />)
+    }else{
     return (
       <View style={styles.container}>
         <ImageBackground source={BgImg} style={styles.backgroundImg}>
@@ -128,7 +134,7 @@ export default class Start extends React.Component {
         </ImageBackground>
       </View>
     );
-  }
+  }}
 }
 const fontStack = {
   fontFamily: "Poppins",
