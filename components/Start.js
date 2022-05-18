@@ -12,7 +12,7 @@ import * as Font from "expo-font";
 //background image
 import BgImg from "../assets/BackgroundImage.png";
 //user icon
-import { SvgCssUri } from "react-native-svg";
+import SvgImg from "../assets/icon.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 //start component which requires to enter a name and allows to customise chat colors
@@ -52,19 +52,18 @@ export default class Start extends React.Component {
         <ImageBackground source={BgImg} style={styles.backgroundImg}>
           <Text style={styles.Title}>The chat App</Text>
           <KeyboardAwareScrollView
+          behavior={'padding'}
             style={styles.startBox}
             contentContainerStyle={{
-              flexGrow: 1,
               justifyContent: "space-around",
+              flexGrow: 1
             }}
             scrollEnabled={true}
           >
             <View style={styles.inputText}>
-              <SvgCssUri
-                width="20%"
-                height="20%"
-                uri="https://raw.githubusercontent.com/valvegan/hello-world/49434bb08d18ce177437e2ec6e3f34f0d3000a04/assets/icon.svg"
-              />
+              <SvgImg 
+              width={20}
+              height={20}/>
               <TextInput
                 style={styles.textInput}
                 onChangeText={(name) => this.setState({ name })}
@@ -131,20 +130,22 @@ export default class Start extends React.Component {
     );
   }
 }
+const fontStack = {
+  fontFamily: "Poppins",
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   backgroundImg: {
     flex: 1,
-    width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
   startBox: {
     backgroundColor: "white",
     width: "88%",
-    height: "40%",
+    height: "30%",
     margin: 30,
   },
   colorOptionsContainer: {
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
   textInput: {
     height: 40,
     flex: 1,
-    fontFamily: "Poppins",
+    ...fontStack,
   },
   colorOption1: {
     width: 50,
@@ -180,9 +181,10 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     margin: 20,
+    padding: 5
   },
   Title: {
-    fontFamily: "Poppins",
+    ...fontStack,
     color: "#ffffff",
     fontSize: 45,
     flex: 1,
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
     margin: 10,
     fontSize: 20,
     padding: 10,
-    fontFamily: "Poppins",
+    ...fontStack,
     textAlign: "center",
   },
   colorPickContainer: {
