@@ -16,7 +16,7 @@ import {
 export default function Chat(props) {
   //retrieving props
   let { name, bg, userId } = props.route.params;
-console.log(name)
+
   //reference to the database
   const myReference = collection(db, "messages");
 
