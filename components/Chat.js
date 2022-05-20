@@ -19,7 +19,7 @@ import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
 //chat component
 export default function Chat(props) {
   //retrieving props
-  let { name, bg, user } = props.route.params;
+  let { name, bg, userId } = props.route.params;
 console.log(name)
   //reference to the database
   const myReference = collection(db, "messages");
@@ -108,7 +108,7 @@ console.log(name)
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: user,
+          _id: userId,
           name: name,
           avatar: 'https://placeimg.com/140/140/any'
         }}

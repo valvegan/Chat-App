@@ -47,15 +47,21 @@ export default function Start(props) {
         name: name,
         bg: bg,
         //trying to pass props to chat (user id)
-        user: loggedUser,
+        userId: loggedUser,
       });
     } catch (e) {
       console.log(e.message);
     }
   };
 
+  //log out the user
   const logOut = async () => {
-    await signOut(Auth);
+    try{await signOut(Auth);
+      setLoggedUser(false)}
+      catch(e){
+        console.log(e.message)
+      }
+    
   };
 
   //reference for background colors
@@ -124,15 +130,40 @@ export default function Start(props) {
               ></TouchableOpacity>
             </View>
           </View>
+          {!loggedUser &&
           <TouchableOpacity
-            accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel="Start chatting button"
-            accessibilityHint="let's you navigate to the chat screen"
-            onPress={onLogin}
-          >
-            <Text style={styles.button}>Start Chatting</Text>
-          </TouchableOpacity>
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Start chatting button"
+          accessibilityHint="let's you navigate to the chat screen"
+          onPress={onLogin}
+        >
+           <Text style={styles.button}>Start Chatting</Text>
+        </TouchableOpacity>
+          }
+          {loggedUser &&
+          <View>
+          <TouchableOpacity
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Start chatting button"
+          accessibilityHint="let's you navigate to the chat screen"
+          onPress={onLogin}
+        >
+           <Text style={styles.button}>Back to chat</Text>
+        </TouchableOpacity>
+          <TouchableOpacity
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="logout button"
+          accessibilityHint="let's you logout (never come back)"
+          onPress={logOut}
+        >
+           <Text style={styles.button}>Sign out</Text>
+        </TouchableOpacity>
+        </View>
+          }
+          
         </KeyboardAwareScrollView>
       </ImageBackground>
     </View>
