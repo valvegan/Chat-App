@@ -18,5 +18,5 @@ export const app = initializeApp(myFirebaseConfig)
 export const db = getFirestore(app)
 
 // Get a reference to the Firebase auth object
-export const auth = getAuth();
+export const Auth = getAuth();
 

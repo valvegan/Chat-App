@@ -5,10 +5,12 @@ import {
   TextInput,
   StyleSheet,
   ImageBackground,
+  Button,
 } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 //native component to allow text components to be clickable (and button)
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useState } from "react";
 import * as Font from "expo-font";
 //background image
 import BgImg from "../assets/BackgroundImage.png";
@@ -17,16 +19,21 @@ import SvgImg from "../assets/icon.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFonts } from "expo-font";
 //using db reference and auth
-import { Auth } from "./firebase/firebase-config";
-import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { Auth, db } from "../firebase/firebase-config";
+import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
 
 //start component which requires to enter a name and allows to customise chat colors
 export default function Start(props) {
   const [name, setName] = useState("");
-  const [color, setColor] = useState("");
+  const [bg, setBg] = useState("");
   const [loggedUser, setLoggedUser] = useState([]);
   const [loaded] = useFonts({
-    Montserrat: require("../assets/fonts/Poppins-Light.ttf"),
+    Poppins: require("../assets/fonts/Poppins-Light.ttf"),
+  });
+
+  //track state changes
+  onAuthStateChanged(Auth, (currentUser) => {
+    setLoggedUser(currentUser.uid);
   });
 
   //logs in any user anonymously
@@ -35,20 +42,21 @@ export default function Start(props) {
       //When a signed-out user uses an app feature that requires authentication with Firebase,
       //sign in the user anonymously
       const user = await signInAnonymously(Auth, loggedUser);
-      console.log(user);
+      console.log(loggedUser);
       props.navigation.navigate("Chat", {
         name: name,
-        bg: color,
+        bg: bg,
+        //trying to pass props to chat (user id)
+        user: loggedUser,
       });
     } catch (e) {
       console.log(e.message);
     }
   };
 
-  //tracks auth state changes
-  onAuthStateChanged(Auth, (currentUser) => {
-    setLoggedUser(currentUser);
-  });
+  const logOut = async () => {
+    await signOut(Auth);
+  };
 
   //reference for background colors
   let colors = {
@@ -79,7 +87,7 @@ export default function Start(props) {
             <TextInput
               style={styles.textInput}
               onChangeText={(name) => setName(name)}
-              value={this.state.name}
+              value={name}
               placeholder="Your Name"
             ></TextInput>
           </View>
@@ -91,28 +99,28 @@ export default function Start(props) {
                 accessibilityLabel="Option to choose a chat background color"
                 accessibilityHint="let's you choose black as chat background color"
                 style={styles.colorOption1}
-                onPress={() => setColor(colors.black)}
+                onPress={() => setBg(colors.black)}
               ></TouchableOpacity>
               <TouchableOpacity
                 accessible={true}
                 accessibilityLabel="Option to choose a chat background color"
                 accessibilityHint="let's you choose purple as chat background color"
                 style={[styles.colorOption1, styles.colorOption2]}
-                onPress={() => setColor(colors.purple)}
+                onPress={() => setBg(colors.purple)}
               ></TouchableOpacity>
               <TouchableOpacity
                 accessible={true}
                 accessibilityLabel="Option to choose a chat background color"
                 accessibilityHint="let's you choose blue as chat background color"
                 style={[styles.colorOption1, styles.colorOption3]}
-                onPress={() => setColor(colors.blue)}
+                onPress={() => setBg(colors.blue)}
               ></TouchableOpacity>
               <TouchableOpacity
                 accessible={true}
                 accessibilityLabel="Option to choose a chat background color"
                 accessibilityHint="let's you choose green as chat background color"
                 style={[styles.colorOption1, styles.colorOption4]}
-                onPress={() => setColor(colors.green)}
+                onPress={() => setBg(colors.green)}
               ></TouchableOpacity>
             </View>
           </View>
