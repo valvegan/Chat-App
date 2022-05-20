@@ -5,16 +5,12 @@ import { useState, useEffect, useCallback } from "react";
 //using db reference and auth
 import { db} from "../firebase/firebase-config";
 import {
-  doc,
   addDoc,
-  setDoc,
   collection,
   onSnapshot,
   query,
   orderBy,
-  where,
 } from "firebase/firestore";
-import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
 
 //chat component
 export default function Chat(props) {

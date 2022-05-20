@@ -5,12 +5,10 @@ import {
   TextInput,
   StyleSheet,
   ImageBackground,
-  Button,
 } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
 //native component to allow text components to be clickable (and button)
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as Font from "expo-font";
 //background image
 import BgImg from "../assets/BackgroundImage.png";
@@ -19,7 +17,7 @@ import SvgImg from "../assets/icon.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFonts } from "expo-font";
 //using db reference and auth
-import { Auth, db } from "../firebase/firebase-config";
+import { Auth } from "../firebase/firebase-config";
 import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
 
 //start component which requires to enter a name and allows to customise chat colors
@@ -27,14 +25,24 @@ export default function Start(props) {
   const [name, setName] = useState("");
   const [bg, setBg] = useState("");
   const [loggedUser, setLoggedUser] = useState([]);
+  //loading the custom font
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Light.ttf"),
   });
 
-  //track state changes
-  onAuthStateChanged(Auth, (currentUser) => {
-    setLoggedUser(currentUser.uid);
-  });
+  useEffect(() => {
+    let isMounted = true;
+    //track state changes
+    //error when logging out?
+    const unsubscribeAuth = onAuthStateChanged(Auth, (currentUser) => {
+      setLoggedUser(currentUser.uid);
+    });
+    return () => {
+      //unsubscribe to onSnapshot and auth
+      isMounted = false;
+      unsubscribeAuth();
+    };
+  }, []);
 
   //logs in any user anonymously
   const onLogin = async () => {
@@ -56,12 +64,12 @@ export default function Start(props) {
 
   //log out the user
   const logOut = async () => {
-    try{await signOut(Auth);
-      setLoggedUser(false)}
-      catch(e){
-        console.log(e.message)
-      }
-    
+    try {
+      await signOut(Auth);
+      setLoggedUser(false);
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
   //reference for background colors
@@ -130,40 +138,39 @@ export default function Start(props) {
               ></TouchableOpacity>
             </View>
           </View>
-          {!loggedUser &&
-          <TouchableOpacity
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel="Start chatting button"
-          accessibilityHint="let's you navigate to the chat screen"
-          onPress={onLogin}
-        >
-           <Text style={styles.button}>Start Chatting</Text>
-        </TouchableOpacity>
-          }
-          {loggedUser &&
-          <View>
-          <TouchableOpacity
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel="Start chatting button"
-          accessibilityHint="let's you navigate to the chat screen"
-          onPress={onLogin}
-        >
-           <Text style={styles.button}>Back to chat</Text>
-        </TouchableOpacity>
-          <TouchableOpacity
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel="logout button"
-          accessibilityHint="let's you logout (never come back)"
-          onPress={logOut}
-        >
-           <Text style={styles.button}>Sign out</Text>
-        </TouchableOpacity>
-        </View>
-          }
-          
+          {!loggedUser && (
+            <TouchableOpacity
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Start chatting button"
+              accessibilityHint="let's you navigate to the chat screen"
+              onPress={onLogin}
+            >
+              <Text style={styles.button}>Start Chatting</Text>
+            </TouchableOpacity>
+          )}
+          {loggedUser && (
+            <View>
+              <TouchableOpacity
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Start chatting button"
+                accessibilityHint="let's you navigate to the chat screen"
+                onPress={onLogin}
+              >
+                <Text style={styles.button}>Back to chat</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="logout button"
+                accessibilityHint="let's you logout (never come back)"
+                onPress={logOut}
+              >
+                <Text style={styles.button}>Sign out</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </KeyboardAwareScrollView>
       </ImageBackground>
     </View>
