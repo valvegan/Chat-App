@@ -1,19 +1,28 @@
 import React from "react";
 import { View, Text, Platform, KeyboardAvoidingView } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
-//import firestone database
-const firebase = require('firebase');
-require('firebase/firestore');
+import { useState, useEffect, useCallback } from "react";
+//using db reference and auth
+import { db, Auth } from "./firebase/firebase-config";
+import {
+  doc,
+  addDoc,
+  setDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  where,
+} from "firebase/firestore";
+import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
+
+
 
 //chat component
-export default class Chat extends React.Component {
-  constructor() {
-    super();
-    //state initialization
-    this.state = {
-      messages: [],
-    };
-  }
+export default function Chat (props) {
+  const [loggedUser, setLoggedUser] = useState([]);
+//reference to the database
+  const myReference = collection(db, "messages");
 
   //doesn't show up the name
   componentDidMount() {
