@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Platform, KeyboardAvoidingView } from "react-native";
+import { View, Platform, KeyboardAvoidingView } from "react-native";
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { useState, useEffect, useCallback } from "react";
 //using db reference and auth
@@ -46,11 +46,11 @@ export default function Chat(props) {
   const getMessages = async () => {
     let messages = "";
     try {
-      const jsonValue = (await AsyncStorage.getItem("messages")) || [];
-      setMessages(JSON.parse(jsonValue));
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      setMessages(JSON.parse(messages));
       //error when setting the messages state
       //  setMessages(JSON.parse(jsonValue));
-      console.log(JSON.parse(jsonValue));
+      console.log(JSON.parse(messages));
     } catch (e) {
       // error reading value
       console.log(e);
@@ -75,31 +75,28 @@ export default function Chat(props) {
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
         setIsOnline(true);
+        // Create a query to the messages collection, retrieving all messages sorted by their date of creation
+        const messagesQuery = query(myReference, orderBy("createdAt", "desc"));
+        // onSnapshot returns an unsubscriber, listening for updates to the messages collection
+        //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
+        const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
+
+        // Save messages to asyncStorage
+        saveMessages();
+        //unsubscribe to snapshot updates
+        return () => {
+          // isMounted = false;
+          unsubscribeList();
+        };
       } else {
         setIsOnline(false);
+        getMessages();
+        return () => {
+          // Delete previously saved messages in asyncStorage
+        //  deleteMessages();
+        };
       }
     });
-
-    // If user is online, retrieve messages from firebase store, if offline use AsyncStorage
-    if (isOnline) {
-      // Create a query to the messages collection, retrieving all messages sorted by their date of creation
-      const messagesQuery = query(myReference, orderBy("createdAt", "desc"));
-      // onSnapshot returns an unsubscriber, listening for updates to the messages collection
-      //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
-      const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
-      // Delete previously saved messages in asyncStorage
-      deleteMessages();
-      // Save messages to asyncStorage
-      saveMessages();
-      // unsubsribe snapshot listener on unmount
-      return () => {
-        // isMounted = false;
-        unsubscribeList();
-      };
-    } else if (!isOnline) {
-      // Load messages from asyncStorage
-      getMessages();
-    }
   }, []);
 
   const onCollectionUpdate = (snap) => {
@@ -112,8 +109,11 @@ export default function Chat(props) {
         user: doc.data().user,
       }))
     );
+    //save all messages in asyncstorage
+    saveMessages();
   };
 
+  //currently unused because new messages should be saved into asyncstorage
   const addMessage = (message) => {
     addDoc(myReference, {
       _id: message._id,
@@ -134,8 +134,8 @@ export default function Chat(props) {
       GiftedChat.append(previousMessages, messages)
     );
     //saving new message both in asyncstorage and db
-    // addMessage(messages[0]);
-    saveMessages(messages[0]);
+    addMessage(messages[0]);
+    //saveMessages(messages[0]);
   }, []);
 
   //this will allow to change the message bubble color
