@@ -31,14 +31,15 @@ export default function Chat(props) {
   //save new messages locally via asyncstorage
   //setItem() is used both to add new data item (when no data for given key exists), and to modify existing item (when previous data for given key exists).
   const saveMessages = async (value) => {
+    let messages = "";
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("messages", jsonValue);
+      messages = JSON.stringify(value);
+      await AsyncStorage.setItem("messages", messages);
       console.log("message saved in asyncstorage");
       console.log(await AsyncStorage.getItem("messages"));
     } catch (e) {
       // saving error
-      console.log(error.message);
+      console.log(error);
     }
   };
 
@@ -46,15 +47,14 @@ export default function Chat(props) {
   //reading data
   //getItem returns a promise that either resolves to stored value when data is found for given key, or returns null otherwise.
   const getMessages = async () => {
-    let jsonValue = "";
     try {
-      jsonValue = (await AsyncStorage.getItem("messages")) || [];
+      const jsonValue = await AsyncStorage.getItem("messages");
       //error when setting the messages state
-      //    setMessages(JSON.parse(jsonValue));
+      setMessages(JSON.parse(jsonValue));
       console.log(JSON.parse(jsonValue));
     } catch (e) {
       // error reading value
-      console.log(error.message);
+      console.log(error);
     }
   };
 
@@ -63,7 +63,7 @@ export default function Chat(props) {
     try {
       await AsyncStorage.removeItem("messages");
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
   };
 
