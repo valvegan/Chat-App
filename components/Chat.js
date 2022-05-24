@@ -24,17 +24,16 @@ export default function Chat(props) {
   //reference to the database
   const myReference = collection(db, "messages");
   const [messages, setMessages] = useState([]);
+  const [obj, setObj] = useState([])
 
   //connection state
   const [onlineState, setOnlineState] = useState();
 
   //save new messages locally via asyncstorage
   //setItem() is used both to add new data item (when no data for given key exists), and to modify existing item (when previous data for given key exists).
-  const saveMessages = async (value) => {
-    let messages = "";
+  const saveMessages = async (messages) => {
     try {
-      messages = JSON.stringify(value);
-      await AsyncStorage.setItem("messages", messages);
+      await AsyncStorage.setItem("messages", JSON.stringify(messages));
       console.log("message saved in asyncstorage");
     } catch (e) {
       // saving error
@@ -47,9 +46,10 @@ export default function Chat(props) {
   //getItem returns a promise that either resolves to stored value when data is found for given key, or returns null otherwise.
   const getMessages = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem("messages");
+      const jsonValue = await AsyncStorage.getItem("messages") || [];
+      setObj(JSON.parse(jsonValue))
       //error when setting the messages state
-      setMessages(JSON.parse(jsonValue));
+    //  setMessages(JSON.parse(jsonValue));
       console.log(JSON.parse(jsonValue));
     } catch (e) {
       // error reading value
@@ -84,10 +84,11 @@ export default function Chat(props) {
         //deleteMessages();
         // Save messages to asyncStorage
         saveMessages();
+        getMessages()
         return () => {
           //unsubscribe to onSnapshot and auth
-          isMounted = false;
-          unsubscribeList();
+     //     isMounted = false;
+     //     unsubscribeList();
         };
       } else {
         console.log("offline");
@@ -130,7 +131,7 @@ export default function Chat(props) {
       GiftedChat.append(previousMessages, messages)
     );
     //saving new message both in asyncstorage and db
-    addMessage(messages[0]);
+   // addMessage(messages[0]);
     saveMessages(messages[0]);
   }, []);
 
@@ -169,7 +170,7 @@ export default function Chat(props) {
       return <InputToolbar {...props} />;
     }
   };
-
+console.log(obj)
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
       <GiftedChat
