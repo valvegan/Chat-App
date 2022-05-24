@@ -161,7 +161,6 @@ export default function Chat(props) {
 
   //gifted chat feature - do not show the input box when the user is offline (so that they can't try to send messages offline)
   const renderInputToolbar = (props) => {
-    //if isConnected is false
     if (!onlineState) {
       //hide toolbar
     } else {
