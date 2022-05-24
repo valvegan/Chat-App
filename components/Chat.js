@@ -4,6 +4,10 @@ import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { useState, useEffect, useCallback } from "react";
 //using db reference and auth
 import { db} from "../firebase/firebase-config";
+//import of asyncstorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+//import of netinfo
+import NetInfo from "@react-native-community/netinfo";
 import {
   addDoc,
   collection,
