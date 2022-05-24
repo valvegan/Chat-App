@@ -37,12 +37,11 @@ export default function Start(props) {
     //error when logging out?
     const unsubscribeAuth = onAuthStateChanged(Auth, (currentUser) => {
       console.log("called", currentUser);
-      if(currentUser?.uid){
+      if (currentUser?.uid) {
         setLoggedUser(currentUser.uid);
-      }else{
-        onLogin()
+      } else {
+        onLogin();
       }
-      
     });
     return () => {
       //unsubscribe to onSnapshot and auth
@@ -174,7 +173,7 @@ export default function Start(props) {
                 accessibilityHint="let's you logout (never come back)"
                 onPress={logOut}
               >
-                <Text style={styles.button}>Sign out</Text>
+                <Text style={styles.button}>Chat as new user</Text>
               </TouchableOpacity>
             </View>
           )}

@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Text, Platform, KeyboardAvoidingView } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { useState, useEffect, useCallback } from "react";
 //using db reference and auth
-import { db} from "../firebase/firebase-config";
+import { db } from "../firebase/firebase-config";
 //import of asyncstorage
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //import of netinfo
 import NetInfo from "@react-native-community/netinfo";
 import {
@@ -23,21 +23,80 @@ export default function Chat(props) {
 
   //reference to the database
   const myReference = collection(db, "messages");
-
   const [messages, setMessages] = useState([]);
+
+  //connection state
+  const [onlineState, setOnlineState] = useState();
+
+  //save new messages locally via asyncstorage
+  //setItem() is used both to add new data item (when no data for given key exists), and to modify existing item (when previous data for given key exists).
+  const saveMessages = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("messages", jsonValue);
+      console.log("message saved in asyncstorage");
+      console.log(await AsyncStorage.getItem("messages"));
+    } catch (e) {
+      // saving error
+      console.log(error.message);
+    }
+  };
+
+  //getMessages function to asynchronously retrieve messages from asyncstorage
+  //reading data
+  //getItem returns a promise that either resolves to stored value when data is found for given key, or returns null otherwise.
+  const getMessages = async () => {
+    let jsonValue = "";
+    try {
+      jsonValue = (await AsyncStorage.getItem("messages")) || [];
+      //error when setting the messages state
+      //    setMessages(JSON.parse(jsonValue));
+      console.log(JSON.parse(jsonValue));
+    } catch (e) {
+      // error reading value
+      console.log(error.message);
+    }
+  };
+
+  //async function to delete messages stored in asyncstorage
+  const deleteMessages = async () => {
+    try {
+      await AsyncStorage.removeItem("messages");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
     props.navigation.setOptions({ title: name });
-    const messagesQuery = query(myReference, orderBy("createdAt", "desc"));
-    // onSnapshot returns an unsubscriber, listening for updates to the messages collection
-    //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
-    const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
-    return () => {
-      //unsubscribe to onSnapshot and auth
-      isMounted = false;
-      unsubscribeList();
-    };
+
+    //using netInfo to find out the user's connection status, and fetching messages from asyncstorage if they are offline (and from firestore if they are online)
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        const messagesQuery = query(myReference, orderBy("createdAt", "desc"));
+        //set the connection state to online
+        setOnlineState(true);
+        console.log("online");
+        // onSnapshot returns an unsubscriber, listening for updates to the messages collection
+        //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
+        const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
+        // Delete previously saved messages in asyncStorage
+        //deleteMessages();
+        // Save messages to asyncStorage
+        saveMessages();
+        return () => {
+          //unsubscribe to onSnapshot and auth
+          isMounted = false;
+          unsubscribeList();
+        };
+      } else {
+        console.log("offline");
+        //set the connection state to online
+        setOnlineState(false);
+        getMessages();
+      }
+    });
   }, []);
 
   const onCollectionUpdate = (snap) => {
@@ -52,7 +111,6 @@ export default function Chat(props) {
     );
   };
 
-  ///need something to fix where the documents are beign added, and if no user is signed in then i want to only display documents that have no id
   const addMessage = (message) => {
     addDoc(myReference, {
       _id: message._id,
@@ -72,7 +130,7 @@ export default function Chat(props) {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
-    addMessage(messages[0]);
+    saveMessages(messages[0]);
   }, []);
 
   /**  //this will allow to send new messages
@@ -101,16 +159,29 @@ export default function Chat(props) {
     );
   };
 
+  //gifted chat feature - do not show the input box when the user is offline (so that they can't try to send messages offline)
+  const renderInputToolbar = (props) => {
+    //if isConnected is false
+    if (!onlineState) {
+      //hide toolbar
+    } else {
+      //display input box / toolbar
+      return <InputToolbar {...props} />;
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
       <GiftedChat
-        renderBubble={renderBubble.bind(this)}
+        renderBubble={renderBubble.bind()}
+        renderInputToolbar={renderInputToolbar.bind()}
         messages={messages}
         onSend={(messages) => onSend(messages)}
+        showAvatarForEveryMessage={true}
         user={{
           _id: userId,
           name: name,
-          avatar: 'https://placeimg.com/140/140/any'
+          avatar: "https://placeimg.com/140/140/any",
         }}
       />
       {/**to fix keyboard issue on old models of android */}
