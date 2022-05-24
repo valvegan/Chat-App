@@ -36,10 +36,9 @@ export default function Chat(props) {
       messages = JSON.stringify(value);
       await AsyncStorage.setItem("messages", messages);
       console.log("message saved in asyncstorage");
-      console.log(await AsyncStorage.getItem("messages"));
     } catch (e) {
       // saving error
-      console.log(error);
+      console.log(e);
     }
   };
 
@@ -54,7 +53,7 @@ export default function Chat(props) {
       console.log(JSON.parse(jsonValue));
     } catch (e) {
       // error reading value
-      console.log(error);
+      console.log(e);
     }
   };
 
@@ -130,6 +129,8 @@ export default function Chat(props) {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
+    //saving new message both in asyncstorage and db
+    addMessage(messages[0]);
     saveMessages(messages[0]);
   }, []);
 
