@@ -51,3 +51,9 @@ expo install react-native-reanimated react-native-gesture-handler react-native-s
 
 4) Keyboard aware scroll
 >npm i react-native-keyboard-aware-scroll-view --save
+
+5) React-Native async storage
+>expo install @react-native-async-storage/async-storage
+
+6) NetInfo package
+>npm install --save @react-native-community/netinfo
