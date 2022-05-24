@@ -80,9 +80,9 @@ export default function Chat(props) {
         // onSnapshot returns an unsubscriber, listening for updates to the messages collection
         //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
         const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
-
         // Save messages to asyncStorage
-        saveMessages();
+        //saveMessages();
+        deleteMessages();
         //unsubscribe to snapshot updates
         return () => {
           // isMounted = false;
@@ -91,10 +91,6 @@ export default function Chat(props) {
       } else {
         setIsOnline(false);
         getMessages();
-        return () => {
-          // Delete previously saved messages in asyncStorage
-        //  deleteMessages();
-        };
       }
     });
   }, []);
@@ -135,7 +131,7 @@ export default function Chat(props) {
     );
     //saving new message both in asyncstorage and db
     addMessage(messages[0]);
-    //saveMessages(messages[0]);
+    // saveMessages(messages[0]);
   }, []);
 
   //this will allow to change the message bubble color
