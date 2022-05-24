@@ -16,21 +16,22 @@ import {
   orderBy,
 } from "firebase/firestore";
 
+//chat component
 export default function Chat(props) {
   //retrieving props
   let { name, bg, userId } = props.route.params;
 
   //reference to the database
   const myReference = collection(db, "messages");
-
-  //state management
   const [messages, setMessages] = useState([]);
+  const [obj, setObj] = useState([])
+
   //connection state
-  const [isOnline, setIsOnline] = useState();
+  const [onlineState, setOnlineState] = useState();
 
   //save new messages locally via asyncstorage
   //setItem() is used both to add new data item (when no data for given key exists), and to modify existing item (when previous data for given key exists).
-  const saveMessages = async () => {
+  const saveMessages = async (messages) => {
     try {
       await AsyncStorage.setItem("messages", JSON.stringify(messages));
       console.log("message saved in asyncstorage");
@@ -44,12 +45,11 @@ export default function Chat(props) {
   //reading data
   //getItem returns a promise that either resolves to stored value when data is found for given key, or returns null otherwise.
   const getMessages = async () => {
-    let messages = "";
     try {
-      const jsonValue = (await AsyncStorage.getItem("messages")) || [];
-      setMessages(JSON.parse(jsonValue));
+      const jsonValue = await AsyncStorage.getItem("messages") || [];
+      setObj(JSON.parse(jsonValue))
       //error when setting the messages state
-      //  setMessages(JSON.parse(jsonValue));
+    //  setMessages(JSON.parse(jsonValue));
       console.log(JSON.parse(jsonValue));
     } catch (e) {
       // error reading value
@@ -67,39 +67,36 @@ export default function Chat(props) {
   };
 
   useEffect(() => {
-    //let isMounted = true;
-    // Set the screen title to the user name entered in the start screen
+    let isMounted = true;
     props.navigation.setOptions({ title: name });
 
-    // Check if user is offline or online using NetInfo
+    //using netInfo to find out the user's connection status, and fetching messages from asyncstorage if they are offline (and from firestore if they are online)
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
-        setIsOnline(true);
+        const messagesQuery = query(myReference, orderBy("createdAt", "desc"));
+        //set the connection state to online
+        setOnlineState(true);
+        console.log("online");
+        // onSnapshot returns an unsubscriber, listening for updates to the messages collection
+        //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
+        const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
+        // Delete previously saved messages in asyncStorage
+        //deleteMessages();
+        // Save messages to asyncStorage
+        saveMessages();
+        getMessages()
+        return () => {
+          //unsubscribe to onSnapshot and auth
+     //     isMounted = false;
+     //     unsubscribeList();
+        };
       } else {
-        setIsOnline(false);
+        console.log("offline");
+        //set the connection state to online
+        setOnlineState(false);
+        getMessages();
       }
     });
-
-    // If user is online, retrieve messages from firebase store, if offline use AsyncStorage
-    if (isOnline) {
-      // Create a query to the messages collection, retrieving all messages sorted by their date of creation
-      const messagesQuery = query(myReference, orderBy("createdAt", "desc"));
-      // onSnapshot returns an unsubscriber, listening for updates to the messages collection
-      //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
-      const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
-      // Delete previously saved messages in asyncStorage
-      deleteMessages();
-      // Save messages to asyncStorage
-      saveMessages();
-      // unsubsribe snapshot listener on unmount
-      return () => {
-        // isMounted = false;
-        unsubscribeList();
-      };
-    } else if (!isOnline) {
-      // Load messages from asyncStorage
-      getMessages();
-    }
   }, []);
 
   const onCollectionUpdate = (snap) => {
@@ -134,9 +131,16 @@ export default function Chat(props) {
       GiftedChat.append(previousMessages, messages)
     );
     //saving new message both in asyncstorage and db
-    // addMessage(messages[0]);
+   // addMessage(messages[0]);
     saveMessages(messages[0]);
   }, []);
+
+  /**  //this will allow to send new messages
+  onSend(messages = []) {
+    this.setState((previousState) => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }));
+  } */
 
   //this will allow to change the message bubble color
   const renderBubble = (props) => {
@@ -159,14 +163,14 @@ export default function Chat(props) {
 
   //gifted chat feature - do not show the input box when the user is offline (so that they can't try to send messages offline)
   const renderInputToolbar = (props) => {
-    if (!isOnline) {
+    if (!onlineState) {
       //hide toolbar
     } else {
       //display input box / toolbar
       return <InputToolbar {...props} />;
     }
   };
-  console.log(messages);
+console.log(obj)
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
       <GiftedChat
