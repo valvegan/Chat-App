@@ -1,6 +1,7 @@
 # Chat App
 Chat app is a chatting application for mobile devices, created in React Native. The app provides users with a chat interface and options to share images and their location.
 
+## A video preview of the app can be viewed [here](https://drive.google.com/file/d/1Yba7y0Waq7wAd0oYgheSY2jbW37B1PeK/view?usp=sharing)
 ## tools: 
 - Expo, 
 - Google Firestore Database, 
@@ -20,9 +21,18 @@ reader so that I can engage with a chat interface.
 
 ### Key Features
 - A Start page where users can enter their name and choose a background color for the chat screen
+<img src="assets/images_readme/start.jpg" height="auto" width="200" alt="movie-view2">
 - A page displaying the conversation, as well as an input field and submit button.
-- Permission to send images and location data 
-- Offline storage
+
+<img src="assets/images_readme/chat_purple.jpg" height="auto" width="200" alt="movie-view2">    <img src="assets/images_readme/chat_1.jpg" height="auto" width="200" alt="movie-view2">
+ 
+- Permission to send images and location data
+
+<img src="assets/images_readme/permissions1.jpg" height="auto" width="200" alt="movie-view2"> <img src="assets/images_readme/permissions2.jpg" height="auto" width="200" alt="movie-view2"> <img src="assets/images_readme/permissions3.jpg" height="auto" width="200" alt="movie-view2">
+
+- Offline storage (note the Airplane icon)
+<img src="assets/images_readme/chat_send_location.jpg" height="auto" width="200" alt="movie-view2">
+
 - Anoynymous user authentication (via Google Firebase authentication)
 
 ## Prerequisities
@@ -30,12 +40,14 @@ reader so that I can engage with a chat interface.
 - Android studio, Xcode, or a mobile phone
 - Expo 
 
-## Setting up the development environment (Expo, Android Studio, etc.).
+## Setting up the development environment 
+### Expo
 1) Make sure expo-cli is installed globally
 >npm install expo-cli --global
 2) new project initialization
 >expo init "APP_NAME"
 
+### Launch via emulator (Android Studio (Windows) or XCode (iOS)), or a mobile phone
 2) Launch
 >npm start
 or 
