@@ -19,7 +19,6 @@ import { useFonts } from "expo-font";
 //using db reference and auth
 import { Auth } from "../firebase/firebase-config";
 import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
-import { onLog } from "firebase/app";
 
 //start component which requires to enter a name and allows to customise chat colors
 export default function Start(props) {

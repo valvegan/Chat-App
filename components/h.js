@@ -15,9 +15,6 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-import MapView from "react-native-maps";
-//import custom actions component
-import CustomActions from "./CustomActions";
 
 export default function Chat(props) {
   //retrieving props
@@ -70,7 +67,7 @@ export default function Chat(props) {
   };
 
   useEffect(() => {
-    let isMounted = true;
+    //let isMounted = true;
     // Set the screen title to the user name entered in the start screen
     props.navigation.setOptions({ title: name });
 
@@ -83,30 +80,24 @@ export default function Chat(props) {
         // onSnapshot returns an unsubscriber, listening for updates to the messages collection
         //if user is logged in and their collection is empty (default, users are anonymous and can't log back in)
         const unsubscribeList = onSnapshot(messagesQuery, onCollectionUpdate);
-        // Save messages to asyncStorage
 
+        // Save messages to asyncStorage
+        saveMessages();
         //unsubscribe to snapshot updates
         return () => {
-          isMounted = false;
+          // isMounted = false;
           unsubscribeList();
         };
       } else {
         setIsOnline(false);
+        getMessages();
         return () => {
           // Delete previously saved messages in asyncStorage
-          deleteMessages();
+        //  deleteMessages();
         };
       }
     });
   }, []);
-
-  useEffect(() => {
-    if (isOnline) {
-      saveMessages();
-    } else {
-      getMessages();
-    }
-  }, [messages]);
 
   const onCollectionUpdate = (snap) => {
     //setting the list
@@ -117,7 +108,9 @@ export default function Chat(props) {
         text: doc.data().text,
         user: doc.data().user,
       }))
-    ); //saveMessages()
+    );
+    //save all messages in asyncstorage
+    saveMessages();
   };
 
   //currently unused because new messages should be saved into asyncstorage
@@ -140,8 +133,9 @@ export default function Chat(props) {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
-    //saving new message in db
+    //saving new message both in asyncstorage and db
     addMessage(messages[0]);
+    //saveMessages(messages[0]);
   }, []);
 
   //this will allow to change the message bubble color
@@ -172,39 +166,12 @@ export default function Chat(props) {
       return <InputToolbar {...props} />;
     }
   };
-
-  //function to render custom actions (pictures, camera, geolocation)
-  const renderCustomActions = (props) => {
-    return <CustomActions {...props} />;
-  };
-
-  //create a function that lets you render a MapView if the message object contains location data
-  const renderCustomView = (props) => {
-    const { currentMessage } = props;
-    if (currentMessage.location) {
-      return (
-        <MapView
-          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
-          region={{
-            latitude: currentMessage.location.latitude,
-            longitude: currentMessage.location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        />
-      );
-    }
-    return null;
-  };
-
   console.log(messages);
   return (
     <View style={{ flex: 1, backgroundColor: bg }}>
       <GiftedChat
         renderBubble={renderBubble.bind()}
-        renderActions={renderCustomActions}
         renderInputToolbar={renderInputToolbar.bind()}
-        renderCustomView={renderCustomView}
         messages={messages}
         onSend={(messages) => onSend(messages)}
         showAvatarForEveryMessage={true}
