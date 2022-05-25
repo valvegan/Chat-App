@@ -36,7 +36,7 @@ reader so that I can engage with a chat interface.
 2) new project initialization
 >expo init "APP_NAME"
 
-2) Lanch
+2) Launch
 >npm start
 or 
 >expo start
