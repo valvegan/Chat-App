@@ -17,7 +17,7 @@ import SvgImg from "../assets/icon.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFonts } from "expo-font";
 //using db reference and auth
-import { Auth } from "../firebase/firebase-config";
+import { Auth } from "../firebase-config/firebase-config";
 import { signInAnonymously, onAuthStateChanged, signOut } from "firebase/auth";
 
 //start component which requires to enter a name and allows to customise chat colors

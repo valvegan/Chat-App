@@ -3,7 +3,7 @@ import { View, Platform, KeyboardAvoidingView } from "react-native";
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { useState, useEffect, useCallback } from "react";
 //using db reference and auth
-import { db } from "../firebase/firebase-config";
+import { db } from "../firebase-config/firebase-config";
 //import of asyncstorage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //import of netinfo
@@ -118,7 +118,7 @@ export default function Chat(props) {
         user: doc.data().user,
         //adding image and location data
         image: doc.data().image,
-        location:  doc.data().location,
+        location: doc.data().location,
       }))
     );
   };

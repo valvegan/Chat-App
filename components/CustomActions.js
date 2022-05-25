@@ -1,17 +1,14 @@
 import React from "react";
-import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 //imports for communicatios features (permission and device camera/image gallery)
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
-import MapView from "react-native-maps";
 //native component to allow text components to be clickable (and button)
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { storageRef, storage } from "../firebase/firebase-config";
+import { storage } from "../firebase-config/firebase-config";
 import {
   ref,
   uploadBytes,
-  uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
 
@@ -101,12 +98,9 @@ export default class CustomActions extends React.Component {
     //images will be uploaded in the subfolder "images"
     const imagesRef = ref(storage, `images/${imageName}`);
     // imagesRef now points to 'images'
-    //const reference = ref.child(`images/${imageName}`);
-    // 'file' comes from the Blob or File API
     //upload blob
     await uploadBytes(imagesRef, blob);
     console.log("blob uploaded");
-
     const downloadUrl = await getDownloadURL(imagesRef);
     console.log(
       "file available on firebase storage at the following link",
