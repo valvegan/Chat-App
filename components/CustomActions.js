@@ -54,6 +54,7 @@ export default class CustomActions extends React.Component {
     }
   };
 
+  //location function
   getLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -61,8 +62,6 @@ export default class CustomActions extends React.Component {
         const result = await Location.getCurrentPositionAsync({}).catch(
           (error) => console.log(error)
         );
-        const longitude = JSON.stringify(result.coords.longitude);
-        const altitude = JSON.stringify(result.coords.latitude);
         if (result) {
           this.props.onSend({
             location: {
@@ -78,15 +77,19 @@ export default class CustomActions extends React.Component {
   };
 
   uploadImageFetch = async (uri) => {
+    //To create your own blob, you need to create a new XMLHttpRequest and set its responseType to 'blob'. Then, open the connection and retrieve the URI’s data (the image) via GET:
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
+      //on load
       xhr.onload = function () {
         resolve(xhr.response);
       };
+      //on error
       xhr.onerror = function (e) {
         console.log(e);
         reject(new TypeError("Network request failed"));
       };
+      //on complete
       xhr.responseType = "blob";
       xhr.open("GET", uri, true);
       xhr.send(null);
@@ -95,14 +98,21 @@ export default class CustomActions extends React.Component {
     const imageNameBefore = uri.split("/");
     const imageName = imageNameBefore[imageNameBefore.length - 1];
     // Create a child reference
+    //images will be uploaded in the subfolder "images"
     const imagesRef = ref(storage, `images/${imageName}`);
     // imagesRef now points to 'images'
     //const reference = ref.child(`images/${imageName}`);
-    const snapshot = await imagesRef.put(blob);
+    // 'file' comes from the Blob or File API
+    //upload blob
+    await uploadBytes(imagesRef, blob);
+    console.log("blob uploaded");
 
-    blob.close();
-
-    return await snapshot.imagesRef.getDownloadURL();
+    const downloadUrl = await getDownloadURL(imagesRef);
+    console.log(
+      "file available on firebase storage at the following link",
+      downloadUrl
+    );
+    return downloadUrl;
   };
 
   onActionPress = () => {

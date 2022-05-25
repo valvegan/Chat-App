@@ -116,8 +116,11 @@ export default function Chat(props) {
         createdAt: doc.data().createdAt.toDate(),
         text: doc.data().text,
         user: doc.data().user,
+        //adding image and location data
+        image: doc.data().image,
+        location:  doc.data().location,
       }))
-    ); //saveMessages()
+    );
   };
 
   //currently unused because new messages should be saved into asyncstorage
@@ -127,6 +130,9 @@ export default function Chat(props) {
       text: message.text || "",
       createdAt: message.createdAt,
       user: message.user,
+      //adding image and location data
+      image: message.image || null,
+      location: message.location || null,
     })
       .then(() => {
         console.log("Doc created");
