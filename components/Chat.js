@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Platform, KeyboardAvoidingView } from "react-native";
+import { View, KeyboardAvoidingView } from "react-native";
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { useState, useEffect, useCallback } from "react";
 //using db reference and auth
